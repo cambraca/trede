@@ -1,0 +1,15 @@
+{
+  "name": "cambraca/framework",
+  "description": "Framework",
+  "minimum-stability": "dev",
+  "license": "proprietary",
+  "authors": [
+    {
+      "name": "Camilo Bravo",
+      "email": "hola@cambraca.com"
+    }
+  ],
+  "require": {
+    "doctrine/dbal": "2.3.5"
+  }
+}

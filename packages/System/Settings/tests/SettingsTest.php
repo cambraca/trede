@@ -8,6 +8,8 @@
 
 namespace System;
 
+use Core\Component;
+
 include_once 'packages/System/Settings/Settings.api.inc';
 include_once 'packages/System/Settings/tests/classes.inc';
 
@@ -18,9 +20,15 @@ class SettingsTest extends \PHPUnit_Framework_TestCase {
   private static $settings;
 
   static function setUpBeforeClass() {
-    global $components;
-    //TODO: find a better way to mock $components
-    $components = [
+    Component::rebuildDefinitions(FALSE, [
+      'Cache\\Cache' => [
+        'api' => [
+          'Bins' => [
+            'Cache\\File\\FileBin',
+          ],
+        ],
+      ],
+      'Cache\\File' => [],
       'System\\Settings' => [
         'api' => [
           'StorageType' => [],
@@ -30,12 +38,15 @@ class SettingsTest extends \PHPUnit_Framework_TestCase {
         ],
       ],
       'TestPackage\\TestComponent' => [],
-    ];
+    ]);
     self::$settings = Settings::i();
   }
 
   static function tearDownAfterClass() {
     self::$settings->clearFileSettings('TestPackage\\TestComponent');
+
+    Component::resetAll();
+    Component::rebuildDefinitions();
   }
 
   /**

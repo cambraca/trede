@@ -37,7 +37,16 @@ class Page extends Component {
   }
 
   function body() {
-    return '<h1> <span>this is a page</span>   </h1>';
+    $html = '<h1> <span>this is a page</span>   </h1>';
+    $html .= '<pre>'.print_r(
+      conn()->fetchAll(
+        query()
+          ->select('nid', 'title')
+          ->from('node', 'n')
+          ->setMaxResults(5)
+      ), TRUE
+    ).'</pre>';
+    return $html;
   }
 
   function run() {

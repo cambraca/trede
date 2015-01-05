@@ -11,7 +11,7 @@ class Hook {
    * @return array
    */
   static function implementers($component_class, $interface) {
-    global $components;
+    $components = Component::definitions();
 
 //    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
 //    $caller_component_full = $trace[1]['class'];

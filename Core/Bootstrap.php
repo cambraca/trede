@@ -15,10 +15,7 @@ class Bootstrap {
     //our autoloader
     include_once 'Autoload.php';
 
-    //initialize components array. TODO: auto-generate this file
-    include_once 'cache/components.php';
-
-    //initialize aliases
+    //Initialize aliases if they haven't been initialized yet.
     Alias::i();
 
     if (php_sapi_name() == 'cli') {

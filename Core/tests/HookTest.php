@@ -15,9 +15,15 @@ class HookTest extends \PHPUnit_Framework_TestCase {
   private $original_components;
 
   protected function setUp() {
-    global $components;
-    $this->original_components = $components;
-    $components = [
+    Component::rebuildDefinitions(FALSE, [
+      'Cache\\Cache' => [
+        'api' => [
+          'Bins' => [
+            'Cache\\File\\FileBin',
+          ],
+        ],
+      ],
+      'Cache\\File' => [],
       'TestPackage\\TestComponent' => [
         'api' => [
           'TestInterface' => [
@@ -30,12 +36,12 @@ class HookTest extends \PHPUnit_Framework_TestCase {
       ],
       'TestPackage\\TestImplementor' => [],
       'TestSecondPackage\\TestSecondImplementor' => [],
-    ];
+    ]);
   }
 
   protected function tearDown() {
-    global $components;
-    $components = $this->original_components;
+    Component::resetAll();
+    Component::rebuildDefinitions();
   }
 
   function testImplementers() {

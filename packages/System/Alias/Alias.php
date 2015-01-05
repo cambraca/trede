@@ -11,6 +11,9 @@ class Alias extends Component {
    */
   function __construct() {
     foreach ($this->allAliases() as $function_name => $data) {
+      if (function_exists($function_name))
+        continue;
+
       $code = isset($data['custom_code']) ? $data['custom_code'] : <<<EOS
 \$instance = {$data['package']}\\{$data['component']}::i();
 return call_user_func_array([\$instance, '{$data['method']}'], func_get_args());

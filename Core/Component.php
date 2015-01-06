@@ -89,7 +89,6 @@ abstract class Component {
         if (is_array($cache) && isset($cache['components']))
           self::$definitions = $cache['components'];
       }
-//      self::$definitions = Cache::i()->get('components', 'file');
     }
 
     if (is_null(self::$definitions))
@@ -115,58 +114,6 @@ abstract class Component {
 
     //automatic discovery (reads all files in the packages folder)
     self::$definitions = [];
-//      'System\\Alias' => [
-//        'api' => [
-//          'Aliases' => [
-//            'Database\\Connection\\Aliases',
-//          ],
-//        ],
-//      ],
-//      'Cache\\Cache' => [
-//        'api' => [
-//          'Bins' => [
-//            'Cache\\File\\FileBin',
-//          ],
-//        ],
-//      ],
-//      'Cache\\File' => [],
-//      'Database\\Connection' => [],
-//      'Html\\Page' => [
-//        'api' => [
-//          'FilterOutput' => [
-////        'Html\\Minimize\\FilterOutput',
-//          ],
-//          'Head' => [
-//            'Google\\Analytics\\RenderTrackingCode',
-//          ],
-//        ],
-//      ],
-//      'System\\Settings' => [
-//        'api' => [
-//          'StorageType' => [],
-//          'Variables' => [
-//            'Google\\Analytics\\Options',
-//            'Database\\Connection\\DBSettings',
-//          ]
-//        ],
-//      ],
-//      'Html\\Minimize' => [],
-//      'Html\\Metatags' => [],
-//      'Google\\Analytics' => [
-////    'implements' => [
-////      'Core\\'
-////    ]
-//      ],
-//      'Cli\\Cli' => [
-//        'api' => [
-//          'Commands' => [
-//            'Cron\\Cron\\CliRunner',
-//            'Cache\\Cache\\ClearCache',
-//          ],
-//        ],
-//      ],
-//      'Cron\\Cron' => [],
-//    ];
 
     //First pass: build main component array, including API interfaces (but not
     //implementers yet).
@@ -197,8 +144,12 @@ abstract class Component {
                 foreach ($namespace['classes'] as $class) {
                   if ($class['type'] != 'INTERFACE')
                     continue;
-//                  if ($class['extends'] != 'HookImplementer') //TODO: implement this
-//                    continue;
+
+                  if (!isset($class['extends']))
+                    continue;
+                  $extends = trim($class['extends'], '\\');
+                  if ($extends != "Core\\HookImplementer")
+                    continue;
 
                   self::$definitions["$package\\$component"]['api'][$class['name']] = [];
                 }
@@ -252,8 +203,12 @@ abstract class Component {
                         foreach ($namespace['classes'] as $class) {
                           if ($class['type'] != 'CLASS')
                             continue;
-//                          if ($class['implements'] != "$d_package\\$d_component\\$d_implementer")
-//                            continue; //TODO: implement this in classesInFile
+
+                          if (!isset($class['implements']))
+                            continue;
+                          $implements = trim($class['implements'], '\\');
+                          if ($implements != "$d_package\\$d_component\\$d_implementer")
+                            continue;
 
                           self::$definitions[$d_component_class]['api'][$d_implementer][] = "$package\\$component\\{$class['name']}";
                         }
@@ -271,16 +226,11 @@ abstract class Component {
       closedir($root_handle);
     }
 
-    echo "ACA!\n";
-    print_r(self::$definitions);
-    exit;
-    self::$definitions = $components;
-
     //We need to initialize the Alias component here since it is necessary for
     //many other components, including Cache (used below).
     Alias::i();
 
-    Cache::i()->set('components', $components, 'components');
+    Cache::i()->set('components', self::$definitions, 'components');
   }
 
   /**
@@ -295,8 +245,11 @@ abstract class Component {
     $classes = $nsPos = $final = array();
     $foundNS = FALSE;
     $ii = 0;
+    $uses = [];
 
-    if (!file_exists($file)) return NULL;
+    if (!file_exists($file)) {
+      return NULL;
+    }
 
     $er = error_reporting();
     error_reporting(E_ALL ^ E_NOTICE);
@@ -305,50 +258,104 @@ abstract class Component {
     $tokens = token_get_all($php_code);
     $count = count($tokens);
 
-    if ($file == 'packages/Database/Connection/Settings.System.inc') {var_dump($tokens); exit;}
-
-    for ($i = 0; $i < $count; $i++)
-    {
-      if(!$foundNS && $tokens[$i][0] == T_NAMESPACE)
-      {
+    for ($i = 0; $i < $count; $i++) {
+      if (!$foundNS && $tokens[$i][0] == T_NAMESPACE) {
         $nsPos[$ii]['start'] = $i;
         $foundNS = TRUE;
       }
-      elseif( $foundNS && ($tokens[$i] == ';' || $tokens[$i] == '{') )
-      {
-        $nsPos[$ii]['end']= $i;
+      elseif ($foundNS && ($tokens[$i] == ';' || $tokens[$i] == '{')) {
+        $nsPos[$ii]['end'] = $i;
         $ii++;
         $foundNS = FALSE;
       }
-      elseif ($i-2 >= 0 && $tokens[$i - 2][0] == T_CLASS && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
-      {
-        if($i-4 >=0 && $tokens[$i - 4][0] == T_ABSTRACT)
-        {
-          $classes[$ii][] = array('name' => $tokens[$i][1], 'type' => 'ABSTRACT CLASS');
+      elseif ($i - 2 >= 0 && $tokens[$i - 2][0] == T_CLASS && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING) {
+        if ($i - 4 >= 0 && $tokens[$i - 4][0] == T_ABSTRACT) {
+          $classes[$ii][] = array(
+            'name' => $tokens[$i][1],
+            'type' => 'ABSTRACT CLASS'
+          );
         }
-        else
-        {
+        else {
           $classes[$ii][] = array('name' => $tokens[$i][1], 'type' => 'CLASS');
         }
+
+        if ($tokens[$i + 1][0] == T_WHITESPACE && $tokens[$i + 2][0] == T_IMPLEMENTS
+          && $tokens[$i + 3][0] == T_WHITESPACE
+        ) {
+          $implements = '';
+          $j = $i + 4;
+          while ($j < $count && $tokens[$j] != '{' && $tokens[$j][0] != T_WHITESPACE) {
+            $implements .= $tokens[$j][1];
+            $j++;
+          }
+          foreach ($uses as $use) {
+            if ($use['as'] == $implements) {
+              $implements = $use['class'];
+              break;
+            }
+          }
+          $classes[$ii][count($classes[$ii]) - 1]['implements'] = $implements;
+        }
       }
-      elseif ($i-2 >= 0 && $tokens[$i - 2][0] == T_INTERFACE && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING)
-      {
-        $classes[$ii][] = array('name' => $tokens[$i][1], 'type' => 'INTERFACE');
+      elseif ($i - 2 >= 0 && $tokens[$i - 2][0] == T_INTERFACE && $tokens[$i - 1][0] == T_WHITESPACE && $tokens[$i][0] == T_STRING) {
+        $classes[$ii][] = array(
+          'name' => $tokens[$i][1],
+          'type' => 'INTERFACE'
+        );
+
+        if ($tokens[$i + 1][0] == T_WHITESPACE && $tokens[$i + 2][0] == T_EXTENDS
+          && $tokens[$i + 3][0] == T_WHITESPACE
+        ) {
+          $extends = '';
+          $j = $i + 4;
+          while ($j < $count && $tokens[$j] != '{' && $tokens[$j][0] != T_WHITESPACE) {
+            $extends .= $tokens[$j][1];
+            $j++;
+          }
+          foreach ($uses as $use) {
+            if ($use['as'] == $extends) {
+              $extends = $use['class'];
+              break;
+            }
+          }
+          $classes[$ii][count($classes[$ii]) - 1]['extends'] = $extends;
+        }
+      }
+      elseif ($tokens[$i][0] == T_USE && $tokens[$i + 1][0] == T_WHITESPACE) {
+        $use_current = count($uses);
+        $uses[$use_current] = [
+          'class' => '',
+          'as' => '',
+        ];
+        $j = $i + 2;
+        while ($j < $count && $tokens[$j] != ';' && $tokens[$j][0] != T_WHITESPACE) {
+          $uses[$use_current]['class'] .= $tokens[$j][1];
+          $j++;
+        }
+
+        if ($tokens[$j] == ';') {
+          $uses[$use_current]['as'] = $tokens[$j - 1][1];
+        }
+        elseif ($tokens[$j + 1][0] == T_AS) {
+          $uses[$use_current]['as'] = $tokens[$j + 3][1];
+        }
       }
     }
-    error_reporting($er);
-    if (empty($classes)) return NULL;
 
-    if(!empty($nsPos))
-    {
-      foreach($nsPos as $k => $p)
-      {
+    error_reporting($er);
+    if (empty($classes)) {
+      return NULL;
+    }
+
+    if (!empty($nsPos)) {
+      foreach ($nsPos as $k => $p) {
         $ns = '';
-        for($i = $p['start'] + 1; $i < $p['end']; $i++)
+        for ($i = $p['start'] + 1; $i < $p['end']; $i++) {
           $ns .= $tokens[$i][1];
+        }
 
         $ns = trim($ns);
-        $final[$k] = array('namespace' => $ns, 'classes' => $classes[$k+1]);
+        $final[$k] = array('namespace' => $ns, 'classes' => $classes[$k + 1]);
       }
       $classes = $final;
     }

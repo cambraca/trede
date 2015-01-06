@@ -15,6 +15,7 @@ class HookTest extends \PHPUnit_Framework_TestCase {
   private $original_components;
 
   protected function setUp() {
+    Component::resetAll();
     Component::rebuildDefinitions(FALSE, [
       'Cache\\Cache' => [
         'api' => [

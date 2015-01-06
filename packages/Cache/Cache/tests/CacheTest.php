@@ -21,6 +21,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
   private static $cache;
 
   static function setUpBeforeClass() {
+    Component::resetAll();
     Component::rebuildDefinitions(FALSE, [
       'Cache\\Cache' => [
         'api' => [

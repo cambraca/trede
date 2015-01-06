@@ -1,6 +1,7 @@
 <?php
 
 namespace Cli\Cli;
+
 use \Core\HookImplementer;
 
 interface Commands extends HookImplementer {

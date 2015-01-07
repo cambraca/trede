@@ -20,5 +20,12 @@ interface Commands extends HookImplementer {
   static function add();
   static function alter();
   static function remove();
-  static function run($command);
+
+  /**
+   *
+   * @param string $command
+   * @param array $arguments
+   * @return mixed
+   */
+  static function run($command, $arguments);
 }

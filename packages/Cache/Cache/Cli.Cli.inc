@@ -19,7 +19,7 @@ class ClearCache implements Commands {
   static function alter() {
   }
 
-  static function run($arguments) {
+  static function run($command, $arguments) {
     if (count($arguments) > 0) {
       \Cache\Cache::i()->clear($arguments[0]);
       return 'Cleared cache for bin: ' . $arguments[0];

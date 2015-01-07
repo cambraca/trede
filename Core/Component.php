@@ -43,11 +43,6 @@ abstract class Component {
    */
   private static $definitions;
 
-  /**
-   * @return mixed
-   */
-  function run() {}
-
   function enable() {
     $this->enabled = TRUE;
   }

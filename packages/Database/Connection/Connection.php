@@ -52,19 +52,6 @@ class Connection extends Component {
   private function setup() {
     $settings = Settings::i();
 
-//    $connectionParams = [
-//      'dbname' => 'appnovationos',
-//      'user' => 'root',
-//      'password' => 'root',
-//      'host' => 'localhost',
-//      'driver' => 'pdo_mysql',
-//    ];
-//
-//    $settings->set(get_class(), 'dbname', $connectionParams['dbname']);
-//    $settings->set(get_class(), 'host', $connectionParams['host']);
-//    $settings->set(get_class(), 'user', $connectionParams['user']);
-//    $settings->set(get_class(), 'password', $connectionParams['password']);
-
     $this->conn = \Doctrine\DBAL\DriverManager::getConnection([
       'dbname' => $settings->get(get_class(), 'dbname'),
       'host' => $settings->get(get_class(), 'host'),

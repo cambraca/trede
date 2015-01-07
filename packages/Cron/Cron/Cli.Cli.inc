@@ -19,7 +19,7 @@ class CliRunner implements Commands {
   static function alter() {
   }
 
-  static function run($arguments) {
+  static function run($command, $arguments) {
     //TEMP: testing the db
     print_r(
       conn()->fetchAll(

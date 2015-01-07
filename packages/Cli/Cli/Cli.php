@@ -33,7 +33,8 @@ class Cli extends Component {
 
     print "Running CLI command: $command\n";
 
+    /** @var Cli\Commands $class */
     $class = $this->commands[$command]['class'];
-    return $class::run($arguments);
+    return $class::run($command, $arguments);
   }
 }

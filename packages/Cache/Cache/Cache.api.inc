@@ -1,6 +1,7 @@
 <?php
 
 namespace Cache\Cache;
+
 use \Core\HookImplementer;
 
 interface Bins extends HookImplementer {

@@ -2,9 +2,7 @@
 
 namespace Cache;
 
-use Cache\Cache\Bins;
 use Core\Component;
-use SebastianBergmann\Exporter\Exception;
 
 class Cache extends Component {
   private $bins = [
@@ -25,7 +23,7 @@ class Cache extends Component {
        */
       foreach ($implementer::add() as $key => $data) {
         if (isset($this->bins[$key]))
-          throw new Exception('Cache bin already exists: ' . $key);
+          throw new \Exception('Cache bin already exists: ' . $key);
 
         if (!isset($data['storage']))
           $data['storage'] = $implementer;
@@ -54,7 +52,7 @@ class Cache extends Component {
         break;
       default:
         /**
-         * @var Bins $class
+         * @var Cache\Bins $class
          */
         $class = $this->bins[$bin]['storage'];
         $class::set($key, $value, $bin);

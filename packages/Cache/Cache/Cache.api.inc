@@ -18,30 +18,30 @@ interface Bins extends HookImplementer {
    * A call for each existing bin is made to every implementer of Bins. If any
    * bin properties are not returned as keys in the array, they will not be
    * modified.
-   * @param $bin
+   * @param string $bin
    * @return array|NULL
    */
   static function alter($bin);
 
   /**
    * Get a cached value from the specified bin.
-   * @param $key
-   * @param $bin
+   * @param string $key
+   * @param string $bin
    * @return mixed
    */
   static function get($key, $bin);
 
   /**
    * Set a cache value.
-   * @param $key
-   * @param $value
-   * @param $bin
-   * @return mixed
+   * @param string $key
+   * @param mixed $value
+   * @param string $bin
    */
   static function set($key, $value, $bin);
 
   /**
-   * Clear all cached values.
+   * Clear all cached values for the specified bin.
+   * @param string $bin
    */
   static function clear($bin);
 }

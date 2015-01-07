@@ -10,13 +10,13 @@ namespace Html;
 
 class FragmentTest extends \PHPUnit_Framework_TestCase {
   function testDummy() {
-    $a=new \Other\A();
-    $this->assertEquals('Other\\A', get_class($a));
+    $a=new \FragmentTestPackage\FragmentTestComponent();
+    $this->assertEquals('FragmentTestPackage\\FragmentTestComponent', get_class($a));
   }
 }
 
-namespace Other;
+namespace FragmentTestPackage;
 
-class A {
+class FragmentTestComponent {
 
 }

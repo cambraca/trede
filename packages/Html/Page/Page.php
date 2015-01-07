@@ -46,6 +46,7 @@ class Page extends Component {
           ->setMaxResults(5)
       ), TRUE
     ).'</pre>';
+    $html .= Fragment::i()->render('menu', 'dummy');
     return $html;
   }
 

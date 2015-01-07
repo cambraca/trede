@@ -11,8 +11,8 @@ namespace Core;
 class DummyTest extends \PHPUnit_Framework_TestCase {
   private $package = 'DummyTestPackage';
   private $component = 'DummyTestComponent';
-  private $package2 = 'DummyAnotherTestPackage';
-  private $component2 = 'DummyAnotherTestComponent';
+  private $package2 = 'DummyTestAnotherPackage';
+  private $component2 = 'DummyTestAnotherComponent';
 
   public function testMethodCall() {
     $object = new Dummy();

@@ -9,10 +9,9 @@
 namespace Cache;
 
 use Core\Component;
-use TestPackage\TestComponent\Bins;
+use CacheTestPackage\CacheTestComponent\Bins;
 
 include_once 'packages/Cache/Cache/Cache.api.inc';
-include_once 'packages/Cache/Cache/tests/classes.inc';
 
 class CacheTest extends \PHPUnit_Framework_TestCase {
   /**
@@ -27,13 +26,13 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
         'api' => [
           'Bins' => [
             'Cache\\File\\FileBin',
-            'TestPackage\\TestComponent\\Bins',
-            'TestPackage\\TestComponent\\BinsAlterer',
+            'CacheTestPackage\\CacheTestComponent\\Bins',
+            'CacheTestPackage\\CacheTestComponent\\BinsAlterer',
           ]
         ],
       ],
       'Cache\\File' => [],
-      'TestPackage\\TestComponent' => [],
+      'CacheTestPackage\\CacheTestComponent' => [],
     ]);
     self::$cache = Cache::i();
   }
@@ -109,4 +108,64 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
     $this->assertNull(self::$cache->get('my_key', 'default'));
     $this->assertNull(self::$cache->get('my_key', 'test_bin'));
   }
+}
+
+namespace CacheTestPackage\CacheTestComponent;
+
+use Cache\Cache\Bins as Source;
+
+class Bins implements Source {
+  private static $data = [];
+
+  static function add() {
+    return [
+      'test_bin' => [
+      ],
+      'test_bin_internal' => [
+        'storage' => 'internal',
+      ],
+      'test_bin_to_alter' => [
+      ],
+    ];
+  }
+
+  static function alter($bin) {
+  }
+
+  static function get($key, $bin) {
+    if (isset(self::$data[$bin][$key]))
+      return self::$data[$bin][$key];
+  }
+
+  static function set($key, $value, $bin) {
+    if (!isset(self::$data[$bin]))
+      self::$data[$bin] = [];
+
+    self::$data[$bin][$key] = $value;
+  }
+
+  static function clear($bin) {
+    self::$data[$bin] = [];
+  }
+}
+
+class BinsAlterer implements Source {
+  static function add() {
+    return [];
+  }
+
+  static function alter($bin) {
+    if ($bin == 'test_bin_to_alter')
+      return ['storage' => 'internal'];
+  }
+
+  static function get($key, $bin) {
+  }
+
+  static function set($key, $value, $bin) {
+  }
+
+  static function clear($bin) {
+  }
+
 }

@@ -49,7 +49,4 @@ class Page extends Component {
     return $html;
   }
 
-  function run() {
-    print $this->render();
-  }
 }

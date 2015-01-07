@@ -8,9 +8,6 @@
 
 namespace Core;
 
-//include_once 'HookTest/TestComponent.inc';
-//include_once 'HookTest/TestInterface.inc';
-
 class HookTest extends \PHPUnit_Framework_TestCase {
   private $original_components;
 
@@ -25,18 +22,18 @@ class HookTest extends \PHPUnit_Framework_TestCase {
         ],
       ],
       'Cache\\File' => [],
-      'TestPackage\\TestComponent' => [
+      'HookTestPackage\\HookTestComponent' => [
         'api' => [
-          'TestInterface' => [
-            'TestPackage\\TestImplementor\\TestInterface',
-            'TestSecondPackage\\TestSecondImplementor\\TestSecondInterface',
+          'HookTestInterface' => [
+            'HookTestPackage\\HookTestImplementor\\HookTestInterface',
+            'HookTestSecondPackage\\HookTestSecondImplementor\\HookTestSecondInterface',
           ],
-          'TestSecondInterface' => [
+          'HookTestSecondInterface' => [
           ],
         ],
       ],
-      'TestPackage\\TestImplementor' => [],
-      'TestSecondPackage\\TestSecondImplementor' => [],
+      'HookTestPackage\\HookTestImplementor' => [],
+      'HookTestSecondPackage\\HookTestSecondImplementor' => [],
     ]);
   }
 
@@ -47,10 +44,24 @@ class HookTest extends \PHPUnit_Framework_TestCase {
 
   function testImplementers() {
     $this->assertEquals([
-      'TestPackage\\TestImplementor\\TestInterface',
-      'TestSecondPackage\\TestSecondImplementor\\TestSecondInterface',
-    ], Hook::implementers('TestPackage\\TestComponent', 'TestInterface'));
+      'HookTestPackage\\HookTestImplementor\\HookTestInterface',
+      'HookTestSecondPackage\\HookTestSecondImplementor\\HookTestSecondInterface',
+    ], Hook::implementers('HookTestPackage\\HookTestComponent', 'HookTestInterface'));
 
-    $this->assertEquals([], Hook::implementers('TestPackage\\TestComponent', 'TestSecondInterface'));
+    $this->assertEquals([], Hook::implementers('HookTestPackage\\HookTestComponent', 'HookTestSecondInterface'));
   }
+}
+
+namespace HookTestPackage;
+
+class HookTestComponent extends Component {
+
+}
+
+namespace HookTestPackage\HookTestComponent;
+
+use \Core\HookImplementer;
+
+interface HookTestInterface extends HookImplementer {
+  static function doSomething($variable);
 }

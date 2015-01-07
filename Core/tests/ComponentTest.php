@@ -8,27 +8,24 @@
 
 namespace Core;
 
-use TestPackage\SecondTestComponent;
-use TestPackage\TestComponent;
-
-include_once 'ComponentTest/TestComponent.inc';
-include_once 'ComponentTest/SecondTestComponent.inc';
+use ComponentTestPackage\ComponentSecondTestComponent;
+use ComponentTestPackage\ComponentTestComponent;
 
 class ComponentTest extends \PHPUnit_Framework_TestCase {
   function testInstances() {
-    $a = TestComponent::i();
-    $b = SecondTestComponent::i();
-    $this->assertEquals('TestPackage\\TestComponent', get_class($a));
-    $this->assertEquals('TestPackage\\SecondTestComponent', get_class($b));
+    $a = ComponentTestComponent::i();
+    $b = ComponentSecondTestComponent::i();
+    $this->assertEquals('ComponentTestPackage\\ComponentTestComponent', get_class($a));
+    $this->assertEquals('ComponentTestPackage\\ComponentSecondTestComponent', get_class($b));
 
-    $c = TestComponent::i();
+    $c = ComponentTestComponent::i();
     $this->assertEquals(TRUE, $a === $c);
   }
 
   function testResetInstances() {
-    $a = TestComponent::i();
+    $a = ComponentTestComponent::i();
     Component::resetAll();
-    $d = TestComponent::i();
+    $d = ComponentTestComponent::i();
 
     //These should be different instances.
     $this->assertEquals(FALSE, $a === $d);
@@ -47,18 +44,18 @@ class ComponentTest extends \PHPUnit_Framework_TestCase {
         ],
       ],
       'Cache\\File' => [],
-      'TestPackage\\TestComponent' => [
+      'ComponentTestPackage\\ComponentTestComponent' => [
         'api' => [
-          'TestInterface' => [
-            'TestPackage\\TestImplementor\\TestInterface',
-            'TestSecondPackage\\TestSecondImplementor\\TestSecondInterface',
+          'ComponentTestInterface' => [
+            'ComponentTestPackage\\ComponentTestImplementor\\ComponentTestInterface',
+            'ComponentTestSecondPackage\\ComponentTestSecondImplementor\\ComponentTestSecondInterface',
           ],
-          'TestSecondInterface' => [
+          'ComponentTestSecondInterface' => [
           ],
         ],
       ],
-      'TestPackage\\TestImplementor' => [],
-      'TestSecondPackage\\TestSecondImplementor' => [],
+      'ComponentTestPackage\\ComponentTestImplementor' => [],
+      'ComponentTestSecondPackage\\ComponentTestSecondImplementor' => [],
     ];
 
     Component::rebuildDefinitions(FALSE, $custom);
@@ -67,4 +64,17 @@ class ComponentTest extends \PHPUnit_Framework_TestCase {
     Component::rebuildDefinitions();
     $this->assertNotEquals($custom, Component::definitions());
   }
+}
+
+namespace ComponentTestPackage;
+
+use Core\Component;
+
+class ComponentTestComponent extends Component {
+  public $a=1;
+
+}
+
+class ComponentSecondTestComponent extends Component {
+
 }

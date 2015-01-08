@@ -30,29 +30,8 @@ class Theme implements Themes {
 
     switch ($theme) {
       case 'menu':
-        //TODO: replace with something like twig or smarty (this functionality will probably come from the Fragment component)
-        $html = '<nav><ul>';
-        $render = function($data) use (&$render) {
-          $html = '';
-          foreach ($data as $item) {
-            $html .= '<li>';
-            if (isset($item['label'])) {
-              //TODO: replace with the same twig/smarty thing, to escape characters, etc. Also, a nice "link" renderer would be nice.
-              if (isset($item['path']))
-                $html .= '<a href="'.$item['path'].'">'.$item['label'].'</a>';
-              else
-                $html .= '<span>'.$item['label'].'</span>';
-            }
-            if (isset($item['children']))
-              $html .= '<ul>'.$render($item['children']).'</ul>';
-            $html .= '</li>';
-          }
-          return $html;
-        };
-        $html .= $render($data);
-        $html .= '</ul></nav>';
-        return $html;
+        //TODO: auto-generate "this component's directory" (components might not be in the main /packages dir)
+        return twig()->render('packages/Common/Menu/twig/menu.twig', ['menu' => $data]);
     }
   }
-
 }

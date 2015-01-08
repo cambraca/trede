@@ -13,6 +13,10 @@ class FragmentTest extends \PHPUnit_Framework_TestCase {
     $a=new \FragmentTestPackage\FragmentTestComponent();
     $this->assertEquals('FragmentTestPackage\\FragmentTestComponent', get_class($a));
   }
+
+  function testTwig() {
+    $this->assertTrue(is_a(Fragment::i()->twig(), 'Twig_Environment'));
+  }
 }
 
 namespace FragmentTestPackage;

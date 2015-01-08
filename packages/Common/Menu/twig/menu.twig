@@ -1,0 +1,25 @@
+{% macro menu_links(links) %}
+    {% import _self as macros %}
+    {% for item in links %}
+        <li>
+            {% if item.path %}
+                <a href="{{ item.path }}">{{ item.label }}</a>
+            {% else %}
+                <span>{{ item.label }}</span>
+            {% endif %}
+            {% if item.children %}
+                <ul>
+                    {{ macros.menu_links(item.children) }}
+                </ul>
+            {% endif %}
+        </li>
+    {% endfor %}
+{% endmacro %}
+
+{% import _self as macros %}
+
+<nav>
+    <ul>
+        {{ macros.menu_links(menu) }}
+    </ul>
+</nav>

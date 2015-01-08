@@ -16,8 +16,7 @@ class Aliases implements Source {
         'package' => 'Database',
         'component' => 'Connection',
         'method' => 'conn',
-      ]
+      ],
     ];
   }
-
 }

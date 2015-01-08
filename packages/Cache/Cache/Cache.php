@@ -84,8 +84,19 @@ class Cache extends Component {
    */
   function clear($bin = NULL) {
     if (is_null($bin)) {
+      //Clear all caches
       foreach ($this->bins as $bin => $data)
         $this->clear($bin);
+
+      //Now clear external caches
+      foreach (implementers('Cache\\Cache', 'Clear') as $implementer) {
+        /**
+         * @var Cache\Clear $implementer
+         */
+        $implementer::clear();
+      }
+
+      return;
     }
 
     switch ($this->bins[$bin]['storage']) {

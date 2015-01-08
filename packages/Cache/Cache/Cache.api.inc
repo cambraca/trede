@@ -45,3 +45,12 @@ interface Bins extends HookImplementer {
    */
   static function clear($bin);
 }
+
+interface Clear extends HookImplementer {
+  /**
+   * Clears an external cache system.
+   * Implementers are called only when Cache::i()->clear() is called without
+   * parameters.
+   */
+  static function clear();
+}

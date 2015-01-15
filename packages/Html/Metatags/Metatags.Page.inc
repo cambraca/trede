@@ -4,8 +4,8 @@
  * @file Adds the generated meta tags to the page's head section.
  */
 
-namespace Html;
+namespace HTML;
 
-use Html\Page\Element;
+use HTML\Page\Element;
 
 Page::i()->head()->append(new Element('meta'));

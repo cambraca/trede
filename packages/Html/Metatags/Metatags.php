@@ -1,12 +1,12 @@
 <?php
 
-namespace Html;
+namespace HTML;
 
 class Metatags extends \Core\Component {
   static $title = 'HTML Metatags';
   static $description = 'Renders HTML meta tags.';
   static $dependencies = [
-    '\Html\Page',
+    '\HTML\Page',
   ];
 
   public function render() {

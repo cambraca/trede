@@ -6,7 +6,7 @@
  * Time: 10:25 AM
  */
 
-use Http\Session;
+use HTTP\Session;
 
 class SessionTest extends \PHPUnit_Framework_TestCase {
   private $session;

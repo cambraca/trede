@@ -1,6 +1,6 @@
 <?php
 
-namespace Html\Page;
+namespace HTML\Page;
 
 class Element {
   /**

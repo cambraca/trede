@@ -1,6 +1,6 @@
 <?php
 
-namespace Http;
+namespace HTTP;
 
 use Core\Component;
 

@@ -8,9 +8,13 @@ class Hook {
    * @alias implementers()
    * @param string $component_class Must include package, e.g. "System\\Settings"
    * @param string $interface
+   * @param bool $return_all
+   *  If TRUE, returns implementers for all components regardless of whether
+   *  they're active or not.
+   *  When using this option it is strongly recommended to cache the results.
    * @return array
    */
-  static function implementers($component_class, $interface) {
+  static function implementers($component_class, $interface, $return_all = FALSE) {
     $components = Component::definitions();
 
 //    $trace = debug_backtrace(DEBUG_BACKTRACE_IGNORE_ARGS, 2);
@@ -42,6 +46,6 @@ class Hook {
       $file = "packages/$package/$component/$caller_component.$caller_package.inc";
     }
 
-    return $implementers;
+    return $return_all ? $implementers : Component::filterActive($implementers);
   }
 }

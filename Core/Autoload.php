@@ -43,7 +43,15 @@ class Autoload {
 
         break;
       case 3:
-        print_r($parts); debug_print_backtrace(0, 4); echo 'die'; exit;
+        list($package, $component, $implementer) = $parts;
+        $components = Component::definitions();
+        if (isset($components["$package\\$component"]['api'][$implementer]))
+          include_once $components["$package\\$component"]['location']
+            . DIRECTORY_SEPARATOR . $component . '.api.inc';
+        elseif (isset($components["$package\\$component"]['implementers'][$implementer]))
+          include_once $components["$package\\$component"]['implementers'][$implementer]['file'];
+
+        else {print_r($parts); debug_print_backtrace(0, 4); echo 'die'; exit;}
     }
   }
 }

@@ -1,6 +1,7 @@
 <?php
 
-namespace Html;
+namespace HTML;
+use Common\Menu;
 use \Core\Component;
 
 class Page extends Component {
@@ -10,11 +11,13 @@ class Page extends Component {
   function render() {
     $html = '<!DOCTYPE html>'.PHP_EOL;
     $html .= '<html>';
-    $html .= '<head>'.self::head().'</head>';
-    $html .= '<body>'.self::body().'</head>';
+    $html .= '<head>'.$this->head().'</head>';
+    $html .= '<body>'.$this->body().'</head>';
     $html .= '</html>';
 
-    foreach (implementers('Html\\Page', 'FilterOutput') as $filter) {
+    Minimize::activate();
+
+    foreach (implementers('HTML\\Page', 'FilterOutput') as $filter) {
       /* @var Page\FilterOutput $filter */
       $html = $filter::filter($html);
     }
@@ -25,7 +28,7 @@ class Page extends Component {
   function head() {
     $html = '<title>test</title>';
 
-    foreach (implementers('Html\\Page', 'Head') as $filter) {
+    foreach (implementers('HTML\\Page', 'Head') as $filter) {
       /* @var Page\Head $filter */
       foreach ($filter::append() as $item) {
         if ($item)
@@ -37,6 +40,7 @@ class Page extends Component {
   }
 
   function body() {
+//    return twig()->render(location('HTML\\Template', 'twig/default.twig'), ['title' => 'hi']);
     $html = '<h1> <span>this is a page</span>   </h1>';
     $html .= '<pre>'.print_r(
       conn()->fetchAll(
@@ -46,7 +50,16 @@ class Page extends Component {
           ->setMaxResults(5)
       ), TRUE
     ).'</pre>';
-    $html .= Fragment::i()->render('menu', 'dummy');
+
+    $html .= Fragment::i()->render('menu', [
+      'home' => ['path' => '/', 'label' => 'Homepage'],
+      'about' => ['path' => '/about', 'label' => 'About us'],
+      'info' => ['label' => 'Information', 'children' => [
+        'portfolio' => ['path' => '/portfolio', 'label' => 'Our awesome portfolio'],
+        'clients' => ['path' => '/clients', 'label' => 'Learn about our clients'],
+      ]],
+      'logout' => ['path' => '/logout', 'label' => 'Log out'],
+    ]);
     return $html;
   }
 

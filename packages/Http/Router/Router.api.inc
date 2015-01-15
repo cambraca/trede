@@ -1,10 +1,11 @@
 <?php
 
-namespace Http\Router;
+namespace HTTP\Router;
+
 use \Core\HookImplementer;
 
 interface Routes extends HookImplementer {
-  static function add($path, $options);
-  static function remove($path);
-  static function alter($path, $options);
+  static function add();
+  static function remove();
+  static function alter();
 }

@@ -2,9 +2,9 @@
 
 namespace Cron\Cron;
 
-use Http\Router\Routes;
+use HTTP\Router\Routes;
 
-class HttpRunner implements Routes {
+class HTTPRunner implements Routes {
   static function add($path, $options) {
     // TODO: Implement add() method.
   }

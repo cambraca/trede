@@ -6,13 +6,14 @@ use System\Settings;
 use Core\Component;
 
 class Analytics extends Component {
+  protected static $initial_state = 'on';
   private $tracking_id;
 
   /**
    * @return string|null
    */
   public function trackingId() {
-    Settings::i()->set('Google\\Analytics', 'tracking_id', 'ua-algoalgo'); //tmp
+//    Settings::i()->set('Google\\Analytics', 'tracking_id', 'ua-algoalgo'); //tmp
 
 
     if (!$this->tracking_id)

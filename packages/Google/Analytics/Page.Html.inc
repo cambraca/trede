@@ -2,7 +2,7 @@
 
 namespace Google\Analytics;
 use Google\Analytics;
-use Html\Page\Head;
+use HTML\Page\Head;
 
 class RenderTrackingCode implements Head {
   static function append() {

@@ -1,7 +1,7 @@
 <?php
 
-namespace Html\Metatags;
-use Html\Page\Element;
+namespace HTML\Metatags;
+use HTML\Page\Element;
 
 class Metatag extends Element {
   protected $tag_name = 'meta';

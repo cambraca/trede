@@ -1,7 +1,8 @@
 <?php
 
-namespace Html;
+namespace HTML;
 
+use Cache\Cache;
 use Core\Component;
 
 /**
@@ -26,7 +27,7 @@ use Core\Component;
  *      <p>First paragraph.</p>
  *      <p>Second paragraph.</p>
  *    </article>
- * @package Html
+ * @package HTML
  */
 class Fragment extends Component {
   /**
@@ -39,7 +40,18 @@ class Fragment extends Component {
    * Set up the themes.
    */
   function __construct() {
-    foreach (implementers('Html\\Fragment', 'Themes') as $implementer) {
+    $this->loadThemes();
+  }
+
+  private function loadThemes() {
+    if ($this->themes)
+      return;
+
+    $this->themes = Cache::i()->get('themes', 'file');
+    if ($this->themes)
+      return;
+
+    foreach (implementers('HTML\\Fragment', 'Themes', TRUE) as $implementer) {
       /**
        * @var Fragment\Themes $implementer
        */
@@ -60,6 +72,8 @@ class Fragment extends Component {
             $theme[$k] = $v;
       }
     }
+
+    Cache::i()->set('themes', $this->themes, 'file');
   }
 
   /**
@@ -82,14 +96,21 @@ class Fragment extends Component {
     return $this->twig;
   }
 
-  function render($theme, $data) {
-    if (!isset($this->themes[$theme]))
-      throw new \Exception('Theme not available: '.$theme);
+  /**
+   * Render the given data using the specified theme.
+   * @param string $theme_name
+   * @param mixed $data
+   * @return string
+   * @throws \Exception
+   */
+  function render($theme_name, $data) {
+    if (!isset($this->themes[$theme_name]))
+      throw new \Exception('Theme not available: '.$theme_name);
 
     /**
      * @var Fragment\Themes $class
      */
-    $class = $this->themes[$theme]['renderer'];
-    return $class::render($theme, $data);
+    $class = $this->themes[$theme_name]['renderer'];
+    return $class::render($theme_name, $this->themes[$theme_name], $data);
   }
 }

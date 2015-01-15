@@ -8,73 +8,59 @@
 
 namespace Core;
 
-use ComponentTestPackage\ComponentSecondTestComponent;
+use ComponentTestPackage\ComponentTestSecondComponent;
 use ComponentTestPackage\ComponentTestComponent;
 
 class ComponentTest extends \PHPUnit_Framework_TestCase {
-  function testInstances() {
-    $a = ComponentTestComponent::i();
-    $b = ComponentSecondTestComponent::i();
-    $this->assertEquals('ComponentTestPackage\\ComponentTestComponent', get_class($a));
-    $this->assertEquals('ComponentTestPackage\\ComponentSecondTestComponent', get_class($b));
+  protected function setUp() {
+    Component::rebuildDefinitions(FALSE, ['Core'.DIRECTORY_SEPARATOR.'tests'.DIRECTORY_SEPARATOR.'ComponentTest']);
+  }
 
-    $c = ComponentTestComponent::i();
-    $this->assertEquals(TRUE, $a === $c);
+  public static function tearDownAfterClass() {
+    Component::rebuildDefinitions();
+    Component::resetAll();
+  }
+
+  function testInstances() {
+    $a = \Test\Test::i();
+    $b = \Test\TestSecond::i();
+    $this->assertEquals('Test\\Test', get_class($a));
+    $this->assertEquals('Test\\TestSecond', get_class($b));
+
+    $c = \Test\Test::i();
+    $this->assertTrue($a === $c);
   }
 
   function testResetInstances() {
-    $a = ComponentTestComponent::i();
+    $a = \Test\Test::i();
     Component::resetAll();
-    $d = ComponentTestComponent::i();
+    $d = \Test\Test::i();
 
     //These should be different instances.
-    $this->assertEquals(FALSE, $a === $d);
+    $this->assertFalse($a === $d);
   }
 
   /**
    * @todo Run a better test of the automatic component discovery operation.
    */
   function testDefinitions() {
-    $custom = [
-      'Cache\\Cache' => [
-        'api' => [
-          'Bins' => [
-            'Cache\\File\\FileBin',
-          ],
-        ],
-      ],
-      'Cache\\File' => [],
-      'ComponentTestPackage\\ComponentTestComponent' => [
-        'api' => [
-          'ComponentTestInterface' => [
-            'ComponentTestPackage\\ComponentTestImplementor\\ComponentTestInterface',
-            'ComponentTestSecondPackage\\ComponentTestSecondImplementor\\ComponentTestSecondInterface',
-          ],
-          'ComponentTestSecondInterface' => [
-          ],
-        ],
-      ],
-      'ComponentTestPackage\\ComponentTestImplementor' => [],
-      'ComponentTestSecondPackage\\ComponentTestSecondImplementor' => [],
-    ];
+    $this->assertArrayHasKey('Test\\Test', Component::definitions());
 
-    Component::rebuildDefinitions(FALSE, $custom);
-    $this->assertEquals($custom, Component::definitions());
-
+    //Exclude our test components
     Component::rebuildDefinitions();
-    $this->assertNotEquals($custom, Component::definitions());
+    $this->assertArrayNotHasKey('Test\\Test', Component::definitions());
   }
-}
 
-namespace ComponentTestPackage;
+  function testExtenders() {
+    $this->assertEquals([
+      'Test\\TestChild',
+      'Test\\TestSibling',
+      'Test\\TestGrandchild',
+    ], extenders('Test\\Test', TRUE, TRUE));
 
-use Core\Component;
-
-class ComponentTestComponent extends Component {
-  public $a=1;
-
-}
-
-class ComponentSecondTestComponent extends Component {
-
+    $this->assertEquals([
+      'Test\\TestChild',
+      'Test\\TestSibling',
+    ], extenders('Test\\Test', FALSE, TRUE));
+  }
 }

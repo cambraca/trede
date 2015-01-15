@@ -28,6 +28,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
             'Cache\\File\\FileBin',
             'CacheTestPackage\\CacheTestComponent\\Bins',
             'CacheTestPackage\\CacheTestComponent\\BinsAlterer',
+//            'CacheTestPackage\\CacheTestComponent\\IllegalBinName',
           ]
         ],
       ],
@@ -108,6 +109,28 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
     $this->assertNull(self::$cache->get('my_key', 'default'));
     $this->assertNull(self::$cache->get('my_key', 'test_bin'));
   }
+
+  /**
+   * @expectedException \Exception
+   */
+  function testIllegalBinNames() {
+    Component::resetAll();
+    Component::rebuildDefinitions(FALSE, [
+      'Cache\\Cache' => [
+        'api' => [
+          'Bins' => [
+            'Cache\\File\\FileBin',
+            'CacheTestPackage\\CacheTestComponent\\Bins',
+            'CacheTestPackage\\CacheTestComponent\\BinsAlterer',
+            'CacheTestPackage\\CacheTestComponent\\IllegalBinName',
+          ]
+        ],
+      ],
+      'Cache\\File' => [],
+      'CacheTestPackage\\CacheTestComponent' => [],
+    ]);
+    self::$cache = Cache::i();
+  }
 }
 
 namespace CacheTestPackage\CacheTestComponent;
@@ -119,13 +142,11 @@ class Bins implements Source {
 
   static function add() {
     return [
-      'test_bin' => [
-      ],
+      'test_bin' => [],
       'test_bin_internal' => [
         'storage' => 'internal',
       ],
-      'test_bin_to_alter' => [
-      ],
+      'test_bin_to_alter' => [],
     ];
   }
 
@@ -157,6 +178,27 @@ class BinsAlterer implements Source {
   static function alter($bin) {
     if ($bin == 'test_bin_to_alter')
       return ['storage' => 'internal'];
+  }
+
+  static function get($key, $bin) {
+  }
+
+  static function set($key, $value, $bin) {
+  }
+
+  static function clear($bin) {
+  }
+
+}
+
+class IllegalBinName implements Source {
+  static function add() {
+    return [
+      'all' => [],
+    ];
+  }
+
+  static function alter($bin) {
   }
 
   static function get($key, $bin) {

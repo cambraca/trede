@@ -46,6 +46,8 @@ class FileBin implements Source {
 
     if (file_exists(self::filename($bin)))
       unlink(self::filename($bin));
+
+    return TRUE;
   }
 
   private static function directory() {

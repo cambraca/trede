@@ -1,6 +1,6 @@
 <?php
 
-namespace Html\Fragment;
+namespace HTML\Fragment;
 
 use Core\HookImplementer;
 
@@ -22,9 +22,11 @@ interface Themes extends HookImplementer {
 
   /**
    * Renders the given data using the specified theme.
-   * @param string $theme
+   * @param string $theme_name
+   * @param array $theme_data
+   *  The theme options, as defined by add().
    * @param mixed $data
    * @return string A valid HTML fragment.
    */
-  static function render($theme, $data);
+  static function render($theme_name, $theme_data, $data);
 }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Html\Page;
+namespace HTML\Page;
 use \Core\HookImplementer;
 
 interface FilterOutput extends HookImplementer {

@@ -2,18 +2,32 @@
 
 namespace Core;
 
-use Http\Response;
-use Http\Router;
+use HTTP\Response;
+use HTTP\Router;
 use Cli\Cli;
 use System\Alias;
 
 class Bootstrap {
+  private static $settings = [
+    'development_mode' => FALSE,
+  ];
+
+  static function isDevelopmentMode() {
+    return (bool) self::$settings['development_mode'];
+  }
+
   static function bootstrap() {
-    //composer autoloader
+    //Composer autoloader
     include_once 'vendor/autoload.php';
 
-    //our autoloader
+    //Our autoloader
     include_once 'Autoload.php';
+
+    //Read bootstrap settings
+    $settings_filename = 'settings/Core_Bootstrap.json';
+    if (file_exists($settings_filename)) {
+      self::$settings = json_decode(file_get_contents($settings_filename), TRUE) + self::$settings;
+    }
 
     //Initialize aliases if they haven't been initialized yet.
     Alias::i();

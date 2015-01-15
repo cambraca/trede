@@ -2,6 +2,7 @@
 
 namespace System;
 
+use Cache\Cache;
 use Core\Component;
 
 class Settings extends Component {
@@ -117,18 +118,21 @@ class Settings extends Component {
     return $this->definitions[$class][$name];
   }
 
-  /**
-   * @todo Caching.
-   */
   private function loadDefinitions() {
     if ($this->definitions)
       return;
 
+    $this->definitions = Cache::i()->get('settings', 'file');
+    if ($this->definitions)
+      return;
+
     $this->definitions = [];
-    foreach (implementers('System\\Settings', 'Variables') as $class) {
+    foreach (implementers('System\\Settings', 'Variables', TRUE) as $class) {
       /* @var Settings\Variables $class */
       list($package, $component) = explode('\\', $class);
       $this->definitions["$package\\$component"] = $class::definitions();
     }
+
+    Cache::i()->set('settings', $this->definitions, 'file');
   }
 }

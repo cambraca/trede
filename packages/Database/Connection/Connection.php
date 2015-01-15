@@ -2,10 +2,9 @@
 
 namespace Database;
 
-use Core\Component;
 use System\Settings;
 
-class Connection extends Component {
+class Connection extends \Core\Component {
   /**
    * @var string|NULL
    * Identifier for the connection.

@@ -33,4 +33,10 @@ class CliRunner implements Commands {
     print_r($arguments);
     return 'Running CRON with above args';
   }
+
+  static function help($command) {
+    return <<<EOS
+Runs the cron.
+EOS;
+  }
 }

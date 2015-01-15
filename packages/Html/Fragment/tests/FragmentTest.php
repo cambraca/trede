@@ -6,7 +6,7 @@
  * Time: 9:11 AM
  */
 
-namespace Html;
+namespace HTML;
 
 class FragmentTest extends \PHPUnit_Framework_TestCase {
   function testDummy() {

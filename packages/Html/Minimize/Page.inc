@@ -1,7 +1,7 @@
 <?php
 
-namespace Html\Minimize;
-use Html\Page\FilterOutput as Source;
+namespace HTML\Minimize;
+use HTML\Page\FilterOutput as Source;
 
 class FilterOutput implements Source {
   static function weight() {return 0;}

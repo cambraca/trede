@@ -2,15 +2,50 @@
 
 namespace System;
 
+use Core\Bootstrap;
 use Core\Component;
 use Core\Hook;
 
 class Alias extends Component {
+  protected $aliases = [];
+
   /**
    * Sets up aliases.
    */
   function __construct() {
-    foreach ($this->allAliases() as $function_name => $data) {
+    $this->aliases = [
+      'location' => [
+        'package' => 'Core',
+        'component' => 'Component',
+        'method' => 'location',
+        'custom_code' => <<<EOS
+return call_user_func_array(['\\Core\\Component', 'location'], func_get_args());
+EOS
+      ],
+      'extenders' => [
+        'package' => 'Core',
+        'component' => 'Component',
+        'method' => 'extenders',
+        'custom_code' => <<<EOS
+return call_user_func_array(['\\Core\\Component', 'extenders'], func_get_args());
+EOS
+      ],
+      'implementers' => [
+        'package' => 'Core',
+        'component' => 'Hook',
+        'method' => 'implementers',
+        'custom_code' => <<<EOS
+return call_user_func_array(['\\Core\\Hook', 'implementers'], func_get_args());
+EOS
+      ],
+    ];
+
+    foreach (Hook::implementers('System\\Alias', 'Aliases', TRUE) as $implementer) {
+      /* @var Alias\Aliases $implementer */
+      $this->aliases = array_merge($this->aliases, $implementer::register());
+    }
+
+    foreach ($this->aliases as $function_name => $data) {
       if (function_exists($function_name))
         continue;
 
@@ -22,7 +57,7 @@ EOS;
       eval('function '.$function_name.'() {'.$code.'}');
     }
 
-    $this->generateStubFile(); //TODO: move this elsewhere
+    $this->generateStubFile();
   }
 
   /**
@@ -31,6 +66,9 @@ EOS;
   function generateStubFile() {
     $filename = 'cache'
       .DIRECTORY_SEPARATOR.'aliases.php';
+
+    if (!Bootstrap::isDevelopmentMode() && file_exists($filename))
+      return;
 
     $code = <<<EOS
 <?php
@@ -45,15 +83,18 @@ EOS;
 
 EOS;
 
-    foreach ($this->allAliases() as $function_name => $data) {
+    foreach ($this->aliases as $function_name => $data) {
       $reflection = new \ReflectionMethod("{$data['package']}\\{$data['component']}", $data['method']);
       $phpdoc = $reflection->getDocComment();
       if ($phpdoc)
         $phpdoc = PHP_EOL . $phpdoc;
 
       $params = [];
-      foreach ($reflection->getParameters() as $param)
+      foreach ($reflection->getParameters() as $param) {
         $params[] = '$' . $param->getName();
+//        if ($param->isDefaultValueAvailable()) var_dump($param->getDefaultValue());
+//        if ($param->isDefaultValueConstant()) var_dump($param->getDefaultValueConstantName());
+      }
       $params = implode(', ', $params);
 
       $code .= <<<EOS
@@ -67,27 +108,4 @@ EOS;
     file_put_contents($filename, $code);
   }
 
-  /**
-   * Returns an array of all aliases. Defines a few ones manually.
-   * @return array
-   */
-  private function allAliases() {
-    $aliases = [
-      'implementers' => [
-        'package' => 'Core',
-        'component' => 'Hook',
-        'method' => 'implementers',
-        'custom_code' => <<<EOS
-return call_user_func_array(['\\Core\\Hook', 'implementers'], func_get_args());
-EOS
-      ],
-    ];
-
-    foreach (Hook::implementers('System\\Alias', 'Aliases') as $implementer) {
-      /* @var Alias\Aliases $implementer */
-      $aliases = array_merge($aliases, $implementer::register());
-    }
-
-    return $aliases;
-  }
 }

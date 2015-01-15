@@ -8,19 +8,23 @@
 
 namespace HTML;
 
+use Core\Component;
+
 class FragmentTest extends \PHPUnit_Framework_TestCase {
+  public static function setUpBeforeClass() {
+    Component::rebuildDefinitions(FALSE, [location('Html\\Fragment', 'tests')]);
+  }
+
+  public static function tearDownAfterClass() {
+    Component::rebuildDefinitions();
+  }
+
   function testDummy() {
-    $a=new \FragmentTestPackage\FragmentTestComponent();
-    $this->assertEquals('FragmentTestPackage\\FragmentTestComponent', get_class($a));
+    $a=new \HTMLFragmentTest\HTMLFragmentTest();
+    $this->assertEquals('HTMLFragmentTest\\HTMLFragmentTest', get_class($a));
   }
 
   function testTwig() {
     $this->assertTrue(is_a(Fragment::i()->twig(), 'Twig_Environment'));
   }
-}
-
-namespace FragmentTestPackage;
-
-class FragmentTestComponent {
-
 }

@@ -3,6 +3,7 @@
 namespace Core;
 
 use Cache\Cache;
+use SebastianBergmann\Exporter\Exception;
 use System\Alias;
 
 abstract class Component {
@@ -75,14 +76,22 @@ abstract class Component {
    */
   private static $definitions;
 
-  static function activate() {
-    $class = get_called_class();
+  static function activate($class = NULL) {
+    if (is_null($class))
+      $class = get_called_class();
     if (!in_array($class, self::$active))
       self::$active[] = $class;
+    if (($key = array_search($class, self::$inactive)) !== FALSE)
+      unset(self::$inactive[$key]);
   }
 
-  function deactivate() {
-    $this->enabled = FALSE;
+  static function deactivate($class = NULL) {
+    if (is_null($class))
+      $class = get_called_class();
+    if (!in_array($class, self::$inactive))
+      self::$inactive[] = $class;
+    if (($key = array_search($class, self::$active)) !== FALSE)
+      unset(self::$active[$key]);
   }
 
   /**
@@ -101,11 +110,12 @@ abstract class Component {
       case 'on':
         break;
       case 'off':
+        if (!in_array($class, self::$active))
+          throw new Exception('Component must be manually activated before being used: ' . $class);
         break;
       case 'auto':
       default:
-        if (!in_array($class, self::$active))
-          self::$active[] = $class;
+        self::activate($class);
     }
 
     if (!isset(self::$instances[$class])) {
@@ -120,6 +130,8 @@ abstract class Component {
    */
   static function resetAll() {
     self::$instances = [];
+    self::$active = [];
+    self::$inactive = [];
   }
 
   /**
@@ -204,10 +216,6 @@ abstract class Component {
    *  Defines additional directories in which to look for components.
    */
   static function rebuildDefinitions($cache_results = TRUE, $extra_roots = NULL) {
-    //TODO: this is temporary code, until the unit tests are fixed
-    if ($extra_roots && is_array(current($extra_roots)))
-      throw new \Exception('ALERT! using rebuildDefinitions the old way');
-
     //automatic discovery (reads all files in the packages folder)
     self::$definitions = [];
 
@@ -245,9 +253,9 @@ abstract class Component {
                 continue;
               include_once $main_path;
 
-              if (is_array($component_class)) {
-                print_r($component_class); exit;
-              }
+//              if (is_array($component_class)) {
+//                print_r($component_class); exit;
+//              }
               if (!class_exists($component_class, FALSE))
                 continue;
 

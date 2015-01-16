@@ -65,7 +65,7 @@ abstract class Component {
   protected static $initial_state = 'auto';
 
   /**
-   * @var array
+   * @var Component[]
    */
   private static $instances = [];
 
@@ -75,6 +75,17 @@ abstract class Component {
    * Cache\File component.
    */
   private static $definitions;
+
+  /**
+   * Execute the finalize function on all component instances.
+   */
+  static function finalizeAll() {
+    foreach (self::$instances as $i) {
+      $i->finalize();
+    }
+  }
+
+  protected function finalize() {}
 
   static function activate($class = NULL) {
     if (is_null($class))
@@ -129,6 +140,7 @@ abstract class Component {
    * Gets rid of all component instances.
    */
   static function resetAll() {
+    self::finalizeAll();
     self::$instances = [];
     self::$active = [];
     self::$inactive = [];
@@ -285,9 +297,8 @@ abstract class Component {
                       continue;
                     }
                     $extends = trim($class['extends'], '\\');
-                    if ($extends != "Core\\HookImplementer") {
+                    if (!in_array($extends, ['Core\\HookImplementer', 'Core\\Alterable']))
                       continue;
-                    }
 
                     self::$definitions["$package\\$component"]['api'][$class['name']] = [];
                   }

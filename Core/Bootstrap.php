@@ -43,5 +43,7 @@ class Bootstrap {
       //running from web server
       print Response::i()->serve();
     }
+
+    Component::finalizeAll();
   }
 }

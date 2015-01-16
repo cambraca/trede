@@ -4,6 +4,7 @@ namespace Cache;
 
 class File extends Cache {
   private static $data = [];
+  private static $bins_to_save = [];
 
   protected static function bins() {
     return [
@@ -31,7 +32,8 @@ class File extends Cache {
 
     self::$data[$bin][$key] = $value;
 
-    file_put_contents(self::filename($bin), json_encode(self::$data[$bin]));
+    if (!in_array($bin, self::$bins_to_save))
+      self::$bins_to_save[] = $bin;
   }
 
   function clear($bin = NULL) {
@@ -41,6 +43,9 @@ class File extends Cache {
 
     if (file_exists(self::filename($bin)))
       unlink(self::filename($bin));
+
+    if (($key = array_search($bin, self::$bins_to_save)) !== FALSE)
+      unset(self::$bins_to_save[$key]);
 
     return TRUE;
   }
@@ -58,6 +63,11 @@ class File extends Cache {
   private static function filename($bin) {
     return self::directory()
     .DIRECTORY_SEPARATOR.$bin.'.json';
+  }
+
+  protected function finalize() {
+    foreach (self::$bins_to_save as $bin)
+      file_put_contents(self::filename($bin), json_encode(self::$data[$bin]));
   }
 
 }

@@ -19,3 +19,9 @@ namespace Core;
  */
 interface HookImplementer {
 }
+
+interface Alterable extends HookImplementer {
+  static function add();
+  static function alter();
+  static function remove();
+}

@@ -2,9 +2,10 @@
 
 namespace Cli\Cli;
 
+use Core\Alterable;
 use \Core\HookImplementer;
 
-interface Commands extends HookImplementer {
+interface Commands extends Alterable {
   /**
    * Adds CLI commands. Name cannot be "all".
    * @return array
@@ -17,9 +18,9 @@ interface Commands extends HookImplementer {
    *   ],
    * ]
    */
-  static function add();
-  static function alter();
-  static function remove();
+//  static function add();
+//  static function alter();
+//  static function remove();
 
   /**
    *

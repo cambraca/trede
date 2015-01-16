@@ -8,7 +8,28 @@
 
 namespace Cache;
 
+use Core\Component;
+
 class FileTest extends \PHPUnit_Framework_TestCase {
+  private static $filename;
+
+  public static function setUpBeforeClass() {
+    self::$filename = 'cache'
+      .DIRECTORY_SEPARATOR.'file'
+      .DIRECTORY_SEPARATOR.'file.json';
+
+    //Backup the existing cache file, if any
+    if (file_exists(self::$filename))
+      rename(self::$filename, self::$filename.'_TEMP');
+  }
+
+  public static function tearDownAfterClass() {
+    //Restore the backup made in setUpBeforeClass()
+    if (file_exists(self::$filename.'_TEMP'))
+      rename(self::$filename.'_TEMP', self::$filename);
+  }
+
+
   function testFileBin() {
     $cache = Cache::i();
     $cache->clear('file');
@@ -18,11 +39,9 @@ class FileTest extends \PHPUnit_Framework_TestCase {
 
   function testInternals() {
     $cache = Cache::i();
-    $filename = 'cache'
-      .DIRECTORY_SEPARATOR.'file'
-      .DIRECTORY_SEPARATOR.'file.json';
-    $this->assertFileExists($filename);
-    $data = json_decode(file_get_contents($filename), TRUE);
+    Component::finalizeAll(); //make sure the file gets written
+    $this->assertFileExists(self::$filename);
+    $data = json_decode(file_get_contents(self::$filename), TRUE);
     $this->assertEquals(['test_key' => 'test_value'], $data);
     $cache->clear('file');
   }

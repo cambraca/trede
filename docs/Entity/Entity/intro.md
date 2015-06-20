@@ -15,7 +15,7 @@ entities in a database, provide arbitrary fields, and quickly build "collections
 
 Here is an example of a component that extends *Entity* and uses some of its traits:
 
-~~~ .php
+~~~php
 namespace Blog;
 class Post extends \Entity\Entity {
   use \Entity\Entity\SimpleDBMapper,  //Provides the ability to save to a database
@@ -57,7 +57,7 @@ class Post extends \Entity\Entity {
 
 This entity can now be used like this:
 
-~~~ .php
+~~~php
 //Load a blog post from the database.
 $my_post = Blog\Post::find('abc123');
 

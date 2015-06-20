@@ -1,7 +1,10 @@
 site_name: Trede
 pages:
 - Home: 'index.md'
-- Entity intro: '../packages/Entity/Entity/docs/1 Intro.md'
+- Entity:
+  - Intro: 'Entity/Entity/intro.md'
+  - The basic Entity: 'Entity/Entity/the basic entity.md'
+  - Storing in a database: 'Entity/Entity/storing in a database.md'
 #- User Guide:
 #    - 'Writing your docs': 'user-guide/writing-your-docs.md'
 #    - 'Styling your docs': 'user-guide/styling-your-docs.md'

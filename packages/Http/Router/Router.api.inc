@@ -2,10 +2,7 @@
 
 namespace HTTP\Router;
 
-use \Core\HookImplementer;
+use Core\Alterable;
 
-interface Routes extends HookImplementer {
-  static function add();
-  static function remove();
-  static function alter();
+interface Routes extends Alterable {
 }

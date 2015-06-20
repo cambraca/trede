@@ -20,12 +20,12 @@ class Response extends Component {
   }
 
   function serve() {
-    $route = Router::i()->load();
+    list($path, $route) = Router::i()->load();
     $this->sendHeaders($route);
 
     switch ($route['type']) {
       case 'html':
-        return Page::i()->render();
+        return Page::i()->render($path, $route);
       case 'xml':
         break;
       case 'json':

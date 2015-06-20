@@ -76,13 +76,33 @@ class Cli extends Component {
       if (!isset($this->commands[$command]))
         return <<<EOS
 Command not found: $command
+Try "help" for information.
 EOS;
       /** @var Cli\Commands $class */
       $class = $this->commands[$command]['class'];
       return $class::help($command);
     } else {
+      $all_commands = array_keys($this->commands);
+      unset($all_commands[array_search('help', $all_commands)]);
+
+      sort($all_commands);
+      $command_array = array_merge(['Available commands:'], $all_commands);
+      $command_list = '';
+      $chars = 0;
+      foreach ($command_array as $command) {
+        if ($chars && ($chars + strlen($command) > 60)) {
+          $chars = 0;
+          $command_list .= PHP_EOL;
+        }
+        $chars += strlen($command);
+        $command_list .= ($command_list ? ' ' : '') . $command;
+      }
       return <<<EOS
-TODO: general help
+Run any command defined for the Cli component.
+To get help for a specific command, try "help [command]".
+
+$command_list
+
 EOS;
     }
   }

@@ -46,6 +46,6 @@ class Hook {
       $file = "packages/$package/$component/$caller_component.$caller_package.inc";
     }
 
-    return $return_all ? $implementers : Component::filterActive($implementers);
+    return $return_all ? $implementers : Component::filterActiveComponents($implementers);
   }
 }

@@ -19,7 +19,7 @@ class Theme implements \HTML\Fragment\Themes {
     switch ($theme_name) {
       case 'menu':
         //TODO: auto-generate "this component's directory" (components might not be in the main /packages dir)
-        return twig()->render($theme_data['template'], ['menu' => $data]);
+        return filter('twig', $theme_data['template'], ['menu' => $data]);
     }
   }
 }

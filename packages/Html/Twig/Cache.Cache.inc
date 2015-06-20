@@ -1,8 +1,9 @@
 <?php
 
-namespace HTML\Fragment;
+namespace HTML\Twig;
 
 use Cache\Cache\External;
+use HTML\Twig;
 
 class TwigCache implements External {
   static function name() {
@@ -10,7 +11,7 @@ class TwigCache implements External {
   }
 
   static function clear() {
-    twig()->clearCacheFiles();
-    twig()->clearTemplateCache();
+    Twig::i()->twig()->clearCacheFiles();
+    Twig::i()->twig()->clearTemplateCache();
   }
 }

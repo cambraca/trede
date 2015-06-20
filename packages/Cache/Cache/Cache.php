@@ -28,32 +28,6 @@ class Cache extends Component {
       /** @var self $extender */
       $this->bins = array_merge($this->bins, $extender::bins());
     }
-//    return;
-//    print_r($this->bins); exit;
-//    foreach (implementers('Cache\\Cache', 'Bins', TRUE) as $implementer) {
-//      /**
-//       * @var Cache\Bins $implementer
-//       */
-//      foreach ($implementer::add() as $key => $data) {
-//        if (in_array($key, self::$reserved_bin_names))
-//          throw new \Exception('Cache bin name reserved: ' . $key);
-//
-//        if (isset($this->bins[$key]))
-//          throw new \Exception('Cache bin already exists: ' . $key);
-//
-//        if (!isset($data['storage']))
-//          $data['storage'] = $implementer;
-//
-//        $this->bins[$key] = $data;
-//      }
-//
-//      foreach ($this->bins as $key => &$bin) {
-//        $alters = $implementer::alter($key);
-//        if ($alters)
-//          foreach ($alters as $k => $v)
-//            $bin[$k] = $v;
-//      }
-//    }
   }
 
   function set($key, $value, $bin = 'default') {
@@ -102,16 +76,18 @@ class Cache extends Component {
   function clear($bin = NULL) {
     if (is_null($bin)) {
       //Clear all caches
-      foreach ($this->bins as $bin => $data)
-        $this->clear($bin);
 
-      //Now clear external caches
+      //First, external caches
       foreach (implementers('Cache\\Cache', 'External', TRUE) as $implementer) {
         /**
          * @var Cache\External $implementer
          */
         $implementer::clear();
       }
+
+      //Now clear all bins
+      foreach ($this->bins as $bin => $data)
+        $this->clear($bin);
 
       return TRUE;
     }

@@ -195,7 +195,7 @@ abstract class Component {
         $ret += array_merge($ret, self::extenders($extender, $recursive, $return_all));
     }
 
-    return $return_all ? $ret : self::filterActive($ret);
+    return $return_all ? $ret : self::filterActiveComponents($ret);
   }
 
   static function definitions() {
@@ -399,6 +399,8 @@ abstract class Component {
       }
     }
 
+    self::resetAll();
+
     //We need to initialize the Alias component here since it is necessary for
     //many other components, including Cache (used below).
     Alias::i();
@@ -567,7 +569,7 @@ abstract class Component {
    * @param $classes
    * @return array
    */
-  static function filterActive($classes) {
+  final static function filterActiveComponents($classes) {
     $components = self::definitions();
     $ret = [];
 

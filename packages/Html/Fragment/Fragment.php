@@ -30,10 +30,6 @@ use Core\Component;
  * @package HTML
  */
 class Fragment extends Component {
-  /**
-   * @var \Twig_Environment
-   */
-  private $twig;
   private $themes = [];
 
   /**
@@ -74,26 +70,6 @@ class Fragment extends Component {
     }
 
     Cache::i()->set('themes', $this->themes, 'file');
-  }
-
-  /**
-   * Returns the Twig object. Initializes it if necessary.
-   * @return \Twig_Environment
-   */
-  function twig() {
-    if (is_null($this->twig)) {
-      \Twig_Autoloader::register();
-      $loader = new \Twig_Loader_Filesystem('.');
-
-      $dir = 'cache'
-        .DIRECTORY_SEPARATOR.'twig';
-      if (!file_exists($dir))
-        mkdir($dir, 0777, TRUE);
-
-      $this->twig = new \Twig_Environment($loader, ['cache' => $dir]);
-    }
-
-    return $this->twig;
   }
 
   /**

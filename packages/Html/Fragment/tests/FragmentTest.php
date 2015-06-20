@@ -23,8 +23,4 @@ class FragmentTest extends \PHPUnit_Framework_TestCase {
     $a=new \HTMLFragmentTest\HTMLFragmentTest();
     $this->assertEquals('HTMLFragmentTest\\HTMLFragmentTest', get_class($a));
   }
-
-  function testTwig() {
-    $this->assertTrue(is_a(Fragment::i()->twig(), 'Twig_Environment'));
-  }
 }

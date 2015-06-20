@@ -5,6 +5,10 @@ namespace Database\Connection;
 use Core\HookImplementer;
 
 interface Schema extends HookImplementer {
-  //TODO: write this interface, use DBAL as much as possible
-
+  /**
+   * @param \Doctrine\DBAL\Schema\Schema $schema
+   * @param string $id
+   * @return NULL
+   */
+  static function alter(&$schema, $id);
 }

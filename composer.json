@@ -11,6 +11,14 @@
   ],
   "require": {
     "doctrine/dbal": "2.3.5",
-    "twig/twig": "1.6.5"
+    "twig/twig": "1.17.0",
+    "michelf/php-markdown": "1.4.1",
+    "symfony/form": "3.0.*@dev",
+    "symfony/security-csrf": "3.0.*@dev",
+    "symfony/twig-bridge": "3.0.*@dev",
+    "symfony/validator": "3.0.*@dev",
+
+    "symfony/translation": "3.0.*@dev",
+    "symfony/config": "3.0.*@dev"
   }
 }

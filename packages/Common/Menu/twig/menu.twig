@@ -3,7 +3,7 @@
   {% for item in links %}
     <li>
       {% if item.path %}
-        <a href="{{ item.path }}">{{ item.label }}</a>
+        <a href="/{{ item.path }}">{{ item.label }}</a>
       {% else %}
         <span>{{ item.label }}</span>
       {% endif %}

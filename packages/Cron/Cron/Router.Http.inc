@@ -5,15 +5,16 @@ namespace Cron\Cron;
 use HTTP\Router\Routes;
 
 class HTTPRunner implements Routes {
-  static function add($path, $options) {
+  static function add() {
     // TODO: Implement add() method.
   }
 
-  static function remove($path) {
+  static function remove() {
     // TODO: Implement remove() method.
   }
 
-  static function alter($path, $options) {
+  static function alter() {
     // TODO: Implement alter() method.
   }
+
 }

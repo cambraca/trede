@@ -4,6 +4,7 @@ namespace System;
 
 use Cache\Cache;
 use Core\Component;
+use Core\Hook;
 
 class Settings extends Component {
   /**
@@ -34,7 +35,7 @@ class Settings extends Component {
    */
   const TYPE_ARRAY = 'array';
 
-  private $definitions;
+  public $definitions;
 
   protected $file_cache = [];
   protected $volatile = [];

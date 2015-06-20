@@ -8,6 +8,7 @@
 
 namespace System;
 
+use Cache\Cache;
 use Core\Component;
 
 class SettingsTest extends \PHPUnit_Framework_TestCase {
@@ -17,6 +18,7 @@ class SettingsTest extends \PHPUnit_Framework_TestCase {
   private static $settings;
 
   static function setUpBeforeClass() {
+    Cache::i()->clear('file');
     Component::rebuildDefinitions(FALSE, [location('System\\Settings', 'tests')]);
     self::$settings = Settings::i();
   }

@@ -16,6 +16,11 @@ class Connection extends \Core\Component {
    */
   private $conn;
 
+  /**
+   * @var \Doctrine\DBAL\Schema\AbstractSchemaManager
+   */
+  private $sm;
+
   function __construct($id = NULL) {
     $this->id = $id;
   }
@@ -43,6 +48,40 @@ class Connection extends \Core\Component {
       $this->setup();
 
     return $this->conn;
+  }
+
+  function updateSchema() {
+    if (!$this->sm)
+      $this->setupSM();
+
+    $from = $this->sm->createSchema();
+    $to = $this->schema();
+
+    $sql_commands = $from->getMigrateToSql($to, $this->conn->getDatabasePlatform());
+
+    foreach ($sql_commands as $sql_command)
+      $this->conn->query($sql_command);
+  }
+
+  /**
+   * @return \Doctrine\DBAL\Schema\Schema
+   */
+  function schema() {
+    $schema = new \Doctrine\DBAL\Schema\Schema();
+
+    foreach (implementers('Database\\Connection', 'Schema', TRUE) as $implementer) { //TODO: all implementers? maybe only "on" and "auto"?
+      /** @var Connection\Schema $implementer */
+      $implementer::alter($schema, $this->id);
+    }
+
+    return $schema;
+  }
+
+  private function setupSM() {
+    if (!$this->conn)
+      $this->setup();
+
+    $this->sm = $this->conn->getSchemaManager();
   }
 
   /**

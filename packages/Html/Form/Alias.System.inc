@@ -1,16 +1,16 @@
 <?php
 
-namespace HTML\Fragment;
+namespace HTML\Form;
 
 use System\Alias\Aliases as Source;
 
 class Aliases implements Source {
   static function register() {
     return [
-      'twig' => [
+      'form' => [
         'package' => 'HTML',
-        'component' => 'Fragment',
-        'method' => 'twig',
+        'component' => 'Form',
+        'method' => 'form',
       ],
     ];
   }

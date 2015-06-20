@@ -1,3 +1,3 @@
 # Trede
 
-Hi, this is the README
+Check out the documentation [here](http://trede.readthedocs.org/).
